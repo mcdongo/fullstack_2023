@@ -19,7 +19,7 @@ const App = () => {
 
   const handleChange = (event) => {
     setNewFilter(event.target.value)
-    setFilteredCountries(countries.filter(country => country.name.includes(filter)))
+    setFilteredCountries(countries.filter(country => country.name.includes(event.target.value)))
   }
 
   return (
