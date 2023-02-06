@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import Message from './components/Message'
 import personService from './services/people'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('Nimi')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setNewFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
 
   const hook = () => {
     personService
@@ -20,6 +23,11 @@ const App = () => {
 
   useEffect(hook, [])
 
+  const resetMessage = () => {
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
   }
@@ -36,7 +44,10 @@ const App = () => {
         .deletePerson(id)
         .then(response => {
           setPersons(persons.filter(x => x.id !== id))
+          setNotificationType('success')
+          setNotificationMessage(`Deleted ${value}`)
         })
+        resetMessage()
     }
   }
 
@@ -55,6 +66,16 @@ const App = () => {
           .update(id, {name:newName, number: newNumber})
           .then(response => {
             setPersons(persons.map(person => person.id !== id ? person : {name:person.name, number:newNumber}))
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            setNotificationType('error')
+            setNotificationMessage(`Information of ${newName} has already been removed from server`)
+            setPersons(persons.filter(x => x.id !== id))
+            setNewName('')
+            setNewNumber('')
+            resetMessage()
           })
       } 
     } else {
@@ -62,8 +83,12 @@ const App = () => {
         .create({name: newName, number: newNumber})
         .then(response => {
           setPersons(persons.concat(response))
+          setNotificationType('success')
+          setNotificationMessage(`Added ${newName}`)
           setNewName('')
+          setNewNumber('')
         })
+        resetMessage()
     }
   }
 
@@ -71,6 +96,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
+      <Message message={notificationMessage} type={notificationType}/>
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
       newNumber={newNumber} handleNumberChange={handleNumberChange} />
