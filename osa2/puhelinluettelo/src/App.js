@@ -71,8 +71,12 @@ const App = () => {
           })
           .catch(error => {
             setNotificationType('error')
-            setNotificationMessage(`Information of ${newName} has already been removed from server`)
-            setPersons(persons.filter(x => x.id !== id))
+            if (error.response.data.name === 'ValidationError') {
+              setNotificationMessage(error.response.data.error)
+            } else {
+              setNotificationMessage(`Information of ${newName} has already been removed from server`)
+              setPersons(persons.filter(x => x.id !== id))
+            }
             setNewName('')
             setNewNumber('')
             resetMessage()
@@ -85,6 +89,13 @@ const App = () => {
           setPersons(persons.concat(response))
           setNotificationType('success')
           setNotificationMessage(`Added ${newName}`)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          setNotificationType('error')
+          setNotificationMessage(error.response.data.error)
+          console.log(error.response.data)
           setNewName('')
           setNewNumber('')
         })
