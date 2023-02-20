@@ -25,10 +25,12 @@ test('all blogs are returned', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
-test('first on is about react patterns', async () => {
+test('specific blog can be found in db', async () => {
   const response = await api.get('/api/blogs')
 
-  expect(response.body[0].title).toBe('React patterns')
+  const contents = response.body.map(x => x.title)
+
+  expect(contents).toContain('React patterns')
 })
 
 test('blogs have an id-field', async () => {
@@ -38,6 +40,45 @@ test('blogs have an id-field', async () => {
     expect(blog.id).toBeDefined()
   })
 })
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'Blogi',
+    author: 'Kalle Kirjailija',
+    url: 'http://google.com',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  const contents = blogsAtEnd.map(x => x.title)
+  expect(contents).toContain('Blogi')
+})
+
+test('default field for likes is 0', async () => {
+  const newBlog = {
+    title: 'Blogi',
+    author: 'Kalle Kirjailija',
+    url: 'http://google.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+})
+/*Jostain syystä testeissä menee välillä liian kauan suorittaa, jolloin tulee aikakatkaisusta johtuva virhe*/
 
 afterAll(async () => {
   await mongoose.connection.close()
