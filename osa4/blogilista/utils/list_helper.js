@@ -11,7 +11,26 @@ const getTotalLikes = array => {
     : array.reduce(reducer, 0)
 }
 
+const favoriteBlog = array => {
+  const reducer = (previous, current) => {
+    return previous.likes > current.likes
+      ? previous
+      : current
+  }
+  const withMostLikes = array.reduce(reducer, 0)
+  if (withMostLikes) {
+    return (
+      {
+        title: withMostLikes.title,
+        author: withMostLikes.author,
+        likes: withMostLikes.likes
+      }
+    )}
+  return null
+}
+
 module.exports = {
   dummy,
-  getTotalLikes
+  getTotalLikes,
+  favoriteBlog
 }

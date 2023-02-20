@@ -76,3 +76,28 @@ describe('total likes', () => {
     expect(result).toBe(7)
   })
 })
+
+describe('most likes', () => {
+  const correctBlog = {
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    likes: 12
+  }
+  test('finds the correct blog with most likes', () => {
+
+    const result = listHelper.favoriteBlog(blogs)
+    expect(result).toEqual(correctBlog)
+  })
+
+  test('returns null with empty array', () => {
+    const result = listHelper.favoriteBlog([])
+    expect(result).toEqual(null)
+  })
+
+  test('with one blog in array returns that one', () => {
+    const listWithOneBlog = [blogs[2]]
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    expect(result).toEqual(correctBlog)
+
+  })
+})
