@@ -48,7 +48,7 @@ const blogs = [
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2,
     __v: 0
-  }  
+  }
 ]
 
 
@@ -122,6 +122,30 @@ describe('most blogs', () => {
     expect(result).toEqual({
       author: 'Robert C. Martin',
       blogs: 1
+    })
+  })
+})
+
+describe('most liked author', () => {
+  test('returns correct author with multiple entries in blogging list', () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  })
+
+  test('return null with empty array', () => {
+    const result = listHelper.mostLikes([])
+    expect(result).toEqual(null)
+  })
+
+  test('with one entry in array, returns its author and its likes', () => {
+    const listWithOneBlog = [blogs[0]]
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Michael Chan',
+      likes: 7
     })
   })
 })
