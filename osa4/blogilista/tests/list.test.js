@@ -64,4 +64,15 @@ describe('total likes', () => {
     const result = listHelper.getTotalLikes(blogs)
     expect(result).toBe(36)
   })
+
+  test('returns 0 when list is empty', () => {
+    const result = listHelper.getTotalLikes([])
+    expect(result).toBe(0)
+  })
+
+  const listWithOneBlog = [blogs[0]]
+  test('when list has only one blog equals the likes of that', () => {
+    const result = listHelper.getTotalLikes(listWithOneBlog)
+    expect(result).toBe(7)
+  })
 })
