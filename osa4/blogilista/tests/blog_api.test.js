@@ -11,102 +11,129 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
-
-
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
-
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
-
-test('specific blog can be found in db', async () => {
-  const response = await api.get('/api/blogs')
-
-  const contents = response.body.map(x => x.title)
-
-  expect(contents).toContain('React patterns')
-})
-
-test('blogs have an id-field', async () => {
-  const response = await api.get('/api/blogs')
-
-  response.body.forEach(blog => {
-    expect(blog.id).toBeDefined()
+describe('when there is initially some blogs saved', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
   })
-})
 
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: 'Blogi',
-    author: 'Kalle Kirjailija',
-    url: 'http://google.com',
-    likes: 5
-  }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
 
-  const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
 
-  const contents = blogsAtEnd.map(x => x.title)
-  expect(contents).toContain('Blogi')
-})
 
-test('default field for likes is 0', async () => {
-  const newBlog = {
-    title: 'Blogi',
-    author: 'Kalle Kirjailija',
-    url: 'http://google.com'
-  }
+  test('blogs have an id-field', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => {
+      expect(blog.id).toBeDefined()
+    })
+  })
+  describe('viewing a specific entry', () => {
+    test('specific blog can be found in db', async () => {
+      const response = await api.get('/api/blogs')
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+      const contents = response.body.map(x => x.title)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
-})
+      expect(contents).toContain('React patterns')
+    })})
 
-test('server rejects malformatted inputs', async () => {
-  let newBlog = {
-    title: 'Blogi',
-    author: 'Kalle Kirjailija'
-  }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+  describe('adding a new blog', () => {
+    test('a valid blog can be added', async () => {
+      const newBlog = {
+        title: 'Blogi',
+        author: 'Kalle Kirjailija',
+        url: 'http://google.com',
+        likes: 5
+      }
 
-  let blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
 
-  newBlog = {
-    author: 'Kalle Kirjailija',
-    url: 'http://google.com'
-  }
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
+      const contents = blogsAtEnd.map(x => x.title)
+      expect(contents).toContain('Blogi')
+    })
 
-  blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    test('default field for likes is 0', async () => {
+      const newBlog = {
+        title: 'Blogi',
+        author: 'Kalle Kirjailija',
+        url: 'http://google.com'
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+    })
+
+    test('server rejects malformatted inputs', async () => {
+      let newBlog = {
+        title: 'Blogi',
+        author: 'Kalle Kirjailija'
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      let blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+      newBlog = {
+        author: 'Kalle Kirjailija',
+        url: 'http://google.com'
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })})
+
+  describe('deletion of an entry', () => {
+    test('succeeds with if id is valid', async () => {
+      const blogs = await helper.blogsInDb()
+
+      const id = blogs[0].id
+      await api
+        .delete(`/api/blogs/${id}`)
+        .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(blogs.length - 1)
+    })
+
+    test('fails if the id is invalid', async () => {
+      const blogs = await helper.blogsInDb()
+      await api
+        .delete('/api/blogs/1092381092381092')
+        .expect(400)
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(blogs.length)
+    })
+  })
 })
 
 afterAll(async () => {
