@@ -29,8 +29,31 @@ const favoriteBlog = array => {
   return null
 }
 
+const mostBlogs = array => {
+  let bloggers = []
+  let maxAuthor = ''
+  let maxBlogs = 0
+
+  array.forEach(blog => {
+    if (!(blog.author in bloggers)) {
+      bloggers[blog.author] = 0
+    }
+    bloggers[blog.author] += 1
+
+    if (bloggers[blog.author] > maxBlogs) {
+      maxAuthor = blog.author
+      maxBlogs = bloggers[blog.author]
+    }
+  })
+
+  return maxBlogs !== 0
+    ? { author: maxAuthor, blogs: maxBlogs }
+    : null
+}
+
 module.exports = {
   dummy,
   getTotalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }

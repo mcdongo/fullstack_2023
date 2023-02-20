@@ -101,3 +101,27 @@ describe('most likes', () => {
 
   })
 })
+
+describe('most blogs', () => {
+  test('returns correct author with multiple entries in blogging list', () => {
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
+    })
+  })
+
+  test('returns null with empty array', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toEqual(null)
+  })
+
+  test('with one entry in array, returns that author and one blog', () => {
+    const listWithOneBlog = [blogs[3]]
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 1
+    })
+  })
+})
