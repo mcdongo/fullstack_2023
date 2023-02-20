@@ -78,7 +78,36 @@ test('default field for likes is 0', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
 })
-/*Jostain syystä testeissä menee välillä liian kauan suorittaa, jolloin tulee aikakatkaisusta johtuva virhe*/
+
+test('server rejects malformatted inputs', async () => {
+  let newBlog = {
+    title: 'Blogi',
+    author: 'Kalle Kirjailija'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  let blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  newBlog = {
+    author: 'Kalle Kirjailija',
+    url: 'http://google.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
 
 afterAll(async () => {
   await mongoose.connection.close()
