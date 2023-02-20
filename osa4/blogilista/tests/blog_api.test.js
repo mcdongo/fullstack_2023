@@ -134,6 +134,37 @@ describe('when there is initially some blogs saved', () => {
       expect(blogsAtEnd).toHaveLength(blogs.length)
     })
   })
+
+  describe('updating an existing entry', () => {
+    test('updating entry with valid id', async () => {
+      const blogs = await helper.blogsInDb()
+      const newBlog = { ...blogs[0], likes: 15 }
+
+      await api
+        .put(`/api/blogs/${newBlog.id}`)
+        .send(newBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd[0].likes).toBe(newBlog.likes)
+    })
+
+    test('updating entry with wrong id', async() => {
+      const blogs = await helper.blogsInDb()
+      const newBlog = { ...blogs[0], likes: 15 }
+
+      await api
+        .put('/api/blogs/1298371982471298')
+        .send(newBlog)
+        .expect(400)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd[0].likes).toBe(blogs[0].likes)
+    })
+  })
 })
 
 afterAll(async () => {
