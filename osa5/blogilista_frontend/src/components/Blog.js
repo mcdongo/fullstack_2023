@@ -25,12 +25,12 @@ const Blog = ({ blog, handleLike, user, handleDelete }) => {
   if (showAll) {
     return (
       <div style={blogStyle}>
-        {blog.title} {blog.author} <button onClick={toggleShow}>hide</button> <br />
+        {blog.title} {blog.author} <button onClick={toggleShow} id='show-blog-button'>hide</button> <br />
         {blog.url}<br />
-        likes {blog.likes} <button onClick={likeBlog}>like</button><br />
+        likes {blog.likes} <button onClick={likeBlog} id='like-blog-button'>like</button><br />
         {blog.user.name}<br />
         {user.username === blog.user.username &&
-          <button onClick={deleteBlog}>delete</button>
+          <button onClick={deleteBlog} id='delete-blog-button'>delete</button>
         }
       </div>
     )

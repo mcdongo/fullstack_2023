@@ -31,5 +31,53 @@ describe('Blog app', function() {
 
       cy.contains('wrong username or password')
     })
+
+    describe('when logged in', function() {
+      beforeEach(function () {
+        cy.login({ username: 'kaarlek', password: 'salasana' })
+        cy.visit('')
+      })
+
+      it('a blog can be created', function() {
+        cy.get('#show-button').click()
+        cy.get('#title').type('Huippu teos')
+        cy.get('#author').type('Niilo')
+        cy.get('#blog-url').type('http://google.com')
+        cy.get('#submit-button').click()
+
+        cy.contains('Huippu teos')
+      })
+
+      describe('when a blog exists', function() {
+        beforeEach(function() {
+          const newBlog = {
+            title: 'Mullistava teos',
+            author: 'Niilo',
+            url: 'http://google.com',
+            user: JSON.parse(localStorage.getItem('loggedBlogappUser'))
+          }
+          cy.createBlog(newBlog)
+          cy.visit('')
+        })
+
+        it('blogs can be liked', function() {
+          cy.contains('Niilo')
+            .contains('view').click()
+
+          cy.contains('likes 0')
+            .contains('like').click()
+          cy.contains('likes 1')
+        })
+
+        it('creator can delete blog', function() {
+          cy.contains('Niilo')
+            .contains('view').click()
+
+          cy.contains('delete').click()
+
+          cy.contains('Mullistava teos').should('not.exist')
+        })
+      })
+    })
   })
 })
