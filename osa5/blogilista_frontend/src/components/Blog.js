@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({blog}) => {
+const Blog = ({blog, handleLike}) => {
   const [showAll, setShowAll] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -12,16 +12,19 @@ const Blog = ({blog}) => {
 
   const toggleShow = () => {
     setShowAll(!showAll)
-    console.log(showAll)
-    console.log(blog)
+  }
+
+  const likeBlog = () => {
+    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id}
+    handleLike(newBlog)
   }
 
   if (showAll) {
     return (
       <div style={blogStyle}>
-        {blog.title} {blog.author} <br />
+        {blog.title} {blog.author} <button onClick={toggleShow}>hide</button> <br />
         {blog.url}<br />
-        likes {blog.likes} <button onClick={toggleShow}>like</button><br />
+        likes {blog.likes} <button onClick={likeBlog}>like</button><br />
         {blog.user.name}<br />
       </div>
     )
