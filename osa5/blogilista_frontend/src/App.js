@@ -76,6 +76,13 @@ const App = () => {
     
   }
 
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
+      await blogService.deleteBlog(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id.toString()))
+    }
+  }
+
   const logOut = () => {
     console.log(user.username, user.token)
     setUser(null)
@@ -121,7 +128,7 @@ const App = () => {
         />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} user={user} handleDelete={handleDelete} />
       )}
     </div>
   )
