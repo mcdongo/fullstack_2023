@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import NoteForm from './components/NoteForm'
+import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -40,11 +43,17 @@ const App = () => {
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
+      setNotificationType('success')
+      setNotificationMessage(`login succesful as ${userName}`)
       setUser(user)
       setUsername('')
       setPassword('')
+      resetMessage()
     } catch (exception) {
+      setNotificationType('error')
+      setNotificationMessage('wrong username or password')
       console.log('väärät tiedot')
+      resetMessage()
     }
   }
 
@@ -54,10 +63,13 @@ const App = () => {
     const newObject = {title, author, url}
 
     await blogService.create(newObject)
+    setNotificationType('success')
+    setNotificationMessage(`a new blog ${title} by ${author} added`)
     setTitle('')
     setAuthor('')
     setUrl('')
     setBlogs(blogs.concat(newObject))
+    resetMessage()
   }
 
   const logOut = () => {
@@ -69,9 +81,18 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
+  const resetMessage = () => {
+    setTimeout(() => {
+      setNotificationMessage(null)
+      setNotificationType(null)
+    }, 5000)
+  }
+
   if (user === null) {
     return (
       <div>
+        <h2>log in to application</h2>
+        <Message message={notificationMessage} type={notificationType} />
         <Login handleLogin={handleLogin} username={userName}
         setUsername={setUsername} password={password} setPassword={setPassword}
         />
@@ -81,6 +102,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Message message={notificationMessage} type={notificationType} />
       <p>
         {user.username} logged in
         <button onClick={logOut}>logout</button>
