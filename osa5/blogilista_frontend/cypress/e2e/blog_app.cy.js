@@ -7,7 +7,14 @@ describe('Blog app', function() {
       password: 'salasana',
       name: 'Kaarle'
     }
+
+    const user2 = {
+      username: 'kuurlek',
+      password: 'salasana',
+      name: 'Kuurle'
+    }
     cy.request('POST', 'http://localhost:3003/api/users', user)
+    cy.request('POST', 'http://localhost:3003/api/users', user2)
     cy.visit('')
   })
 
@@ -76,6 +83,14 @@ describe('Blog app', function() {
           cy.contains('delete').click()
 
           cy.contains('Mullistava teos').should('not.exist')
+        })
+
+        it('delete button appears only to creator', function() {
+          cy.login({ username: 'kuurlek', password: 'salasana' })
+          cy.contains('Niilo')
+            .contains('view').click()
+
+          cy.contains('delete').should('not.exist')
         })
       })
     })
