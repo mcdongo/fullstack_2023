@@ -22,20 +22,29 @@ const BlogForm = ({
   }
 
   return (
-    <div>
+    <div className='formDiv'>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
             title:
-          <input value={title} onChange={({ target }) => setTitle(target.value)}/>
+          <input
+            value={title} onChange={({ target }) => setTitle(target.value)}
+            placeholder='book title'
+          />
         </div>
         <div>
             author:
-          <input value={author} onChange={({ target }) => setAuthor(target.value)}/>
+          <input
+            value={author} onChange={({ target }) => setAuthor(target.value)}
+            placeholder='book author'
+          />
         </div>
         <div>
             url:
-          <input value={url} onChange={({ target }) => setUrl(target.value)} />
+          <input
+            value={url} onChange={({ target }) => setUrl(target.value)}
+            placeholder='book url'
+          />
         </div>
         <div>
           <button type='submit'>create</button>
