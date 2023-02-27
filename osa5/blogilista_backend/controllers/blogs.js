@@ -14,7 +14,7 @@ router.get('/', async (request, response) => {
 router.post('/', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
   const blog = new Blog({
-    title, author, url, 
+    title, author, url,
     likes: likes ? likes : 0
   })
 

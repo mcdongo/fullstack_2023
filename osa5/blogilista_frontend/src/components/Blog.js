@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({blog, handleLike, user, handleDelete}) => {
+const Blog = ({ blog, handleLike, user, handleDelete }) => {
   const [showAll, setShowAll] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -14,7 +14,7 @@ const Blog = ({blog, handleLike, user, handleDelete}) => {
     setShowAll(!showAll)
   }
   const likeBlog = () => {
-    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id}
+    const newBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
     handleLike(newBlog)
   }
 
@@ -39,7 +39,7 @@ const Blog = ({blog, handleLike, user, handleDelete}) => {
     <div style={blogStyle}>
       {blog.title} {blog.author}
       <button onClick={toggleShow}>view</button>
-    </div>  
+    </div>
   )
 }
 
