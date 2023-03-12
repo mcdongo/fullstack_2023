@@ -10,13 +10,29 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-export const asObject = (anecdote) => {
+const asObject = (anecdote) => {
   return {
     content: anecdote,
     id: getId(),
     votes: 0
   }
 }
+
+export const voteAnecdote = (id) => {
+  return {
+    type: 'VOTE',
+    payload: { id }
+  }
+}
+
+export const createAnecdote = (content) => {
+  return {
+    type: 'NEW_ANECDOTE',
+    payload: asObject(content)
+  }
+}
+
+
 
 const initialState = anecdotesAtStart.map(asObject)
 
