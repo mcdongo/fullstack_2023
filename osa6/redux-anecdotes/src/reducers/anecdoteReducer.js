@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -9,7 +10,7 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-const asObject = (anecdote) => {
+export const asObject = (anecdote) => {
   return {
     content: anecdote,
     id: getId(),
@@ -28,6 +29,12 @@ const reducer = (state = initialState, action) => {
       return state.map(anecdote =>
         anecdote.id !== id ? anecdote : votedAnecdote
       )
+
+    case 'NEW_ANECDOTE':
+      const anecdote = action.payload
+      state = state.concat(anecdote)
+      return state
+
   }
   console.log('state now: ', state)
   console.log('action', action)
