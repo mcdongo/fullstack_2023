@@ -2,11 +2,15 @@ import { useState } from "react"
 import { useQuery, useMutation } from "@apollo/client"
 import { ALL_AUTHORS, EDIT_AUTHOR } from "../utils/queries"
 
-const SetBirthyearForm = () => {
+const SetBirthyearForm = ({ authors }) => {
   const [name, setName] = useState('')
   const [birthyear, setBirthyear] = useState('')
 
   const [ editAuthor ] = useMutation(EDIT_AUTHOR)
+
+  if (!authors) {
+    return null
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -18,14 +22,24 @@ const SetBirthyearForm = () => {
     setBirthyear('')
   }
 
+  const handleAuthorChange = (event) => {
+    setName(event.target.value)
+  }
+
   return (
     <div>
       <h2>
         Set birthyear
       </h2>
       <form onSubmit={handleSubmit}>
-        name
-        <input type='text' value={name} onChange={ ({ target }) => setName(target.value)} />
+        <select value={name} onChange={handleAuthorChange}>
+          {authors.map(author => (
+            <option key={author.name} value={author.name}>
+              {author.name}
+            </option>
+          ))}
+
+        </select>
         <br/>
         birthyear
         <input type='text' value={birthyear} onChange={ ({ target }) => setBirthyear(target.value)} />
@@ -69,7 +83,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <SetBirthyearForm />
+      <SetBirthyearForm authors={authors}/>
     </div>
   )
 }
