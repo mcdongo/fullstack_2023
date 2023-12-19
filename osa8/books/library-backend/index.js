@@ -96,11 +96,21 @@ const resolvers = {
     addBook: async (root, args) => {
       console.log(args)
       let author = await Author.findOne({ name: args.author })
+      
       if (!author) {
         author = new Author({ name: args.author })
-        await author.save()
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+              error
+            }
+          })
+        }
       }
-      console.log(author)
       const newBook = new Book({ ...args, author })
       
       try {
@@ -123,7 +133,17 @@ const resolvers = {
       }
 
       author.born = args.setBornTo
-      return author.save()
+      try {
+        return author.save()
+      } catch (error) {
+        throw new GraphQLError('editing author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.setBornTo,
+            error
+          }
+        })
+      }
     }
   }
 }
