@@ -60,28 +60,22 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      let newList = books
-      if (args.author) {
+    bookCount: async () => await Book.collection.countDocuments(),
+    authorCount: async () => await Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      /*if (args.author) { //e
         newList = books.filter(book => book.author === args.author)
-      }
-      if (args.genre) {
-        newList = newList.filter(book => book.genres.find(genre => genre === args.genre))
-      }
-      return newList
+      }*/
+      return await Book.find({})
     },
-    allAuthors: () => {
-      return authors.map(author => ({
-        ...author,
-        bookount: books.filter(book => book.author === author.name).length
-      }))
+    allAuthors: async () => {
+      return await Author.find({})
+        //bookount: books.filter(book => book.author === author.name).length //e
     }
   },
 
   Author: {
-    bookCount: (author) => {
+    bookCount: (author) => { //e
       return books.filter(book => book.author === author.name).length
     }
   },
@@ -109,7 +103,7 @@ const resolvers = {
       }
       return newBook
     },
-    editAuthor: (root, args) => {
+    editAuthor: (root, args) => { //e
       const author = authors.find(a => a.name === args.name)
       if (!author) {
         return null
