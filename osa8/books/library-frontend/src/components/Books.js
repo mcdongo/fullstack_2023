@@ -1,10 +1,31 @@
+import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../utils/queries"
+import { ALL_BOOKS, BOOKS_BY_GENRE } from "../utils/queries"
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS, {
+  const [chosenGenre, setChosenGenre] = useState('all')
+  const [genreList, setGenreList] = useState([])
+
+  const queryToUse = chosenGenre === 'all' ? ALL_BOOKS : BOOKS_BY_GENRE
+
+  const result = useQuery(queryToUse, {
+    variables: chosenGenre !== 'all' ? { genre: chosenGenre } : {},
     pollInterval: 2000
   })
+
+  useEffect(() => {
+    if (result.data && chosenGenre === 'all') {
+      const uniqueGenreSet = new Set()
+      const tempBookList = result.data.allBooks
+
+      tempBookList.forEach((book) => {
+        book.genres.forEach((genre) => uniqueGenreSet.add(genre))
+      })
+      setGenreList(Array.from(uniqueGenreSet))
+    }
+  }, [result.data]) //eslint-disable-line
+
+
   if (!props.show) {
     return null
   }
@@ -12,9 +33,8 @@ const Books = (props) => {
   if (result.loading) {
     return <div>loading...</div>
   }
-
-  console.log(result)
   const books = result.data.allBooks
+
 
   return (
     <div>
@@ -36,6 +56,10 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      {genreList.map((genre) => (
+          <button key={genre} onClick={() => setChosenGenre(genre)}>{genre}</button>
+      ))}
+      <button onClick={() => setChosenGenre('all')}>all genres</button>
     </div>
   )
 }
