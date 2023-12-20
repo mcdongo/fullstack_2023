@@ -83,7 +83,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <SetBirthyearForm authors={authors}/>
+      {props.token &&
+        <SetBirthyearForm authors={authors}/>
+      }
     </div>
   )
 }
