@@ -22,13 +22,13 @@ const parseDailyArguments = (args: string[]): trainingArguments => {
       throw new Error('Provided values were not numbers!');
     }
 
-  })
+  });
 
   return {
     dailyData,
     targetHours
-  }
-}
+  };
+};
 
 interface trainingData {
   periodLength: number;
@@ -76,8 +76,8 @@ const calculateExercises = (exercises: number[], targetHours: number): trainingD
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 try {
   const { dailyData, targetHours } = parseDailyArguments(process.argv);
@@ -85,7 +85,7 @@ try {
 } catch (error: unknown) {
   let errorMessage = 'Something bad happened';
   if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message
+    errorMessage += ' Error: ' + error.message;
     console.log(errorMessage);
   }
 }
