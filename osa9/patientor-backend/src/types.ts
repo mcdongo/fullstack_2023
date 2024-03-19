@@ -27,7 +27,6 @@ export interface Patient {
   entries: Entry[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BaseEntry {
   id: string;
   description: string;
@@ -36,12 +35,12 @@ export interface BaseEntry {
   diagnosisCodes?: Array<Diagnosis['code']>;
 }
 
-interface DischargeInfo {
+export interface DischargeInfo {
   date: string;
   criteria: string;
 }
 
-interface SickLeave {
+export interface SickLeave {
   startDate: string;
   endDate: string;
 }
@@ -70,3 +69,8 @@ export type Entry =
 
 export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatient = Omit<Patient, 'id'>;
+
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown ?
+Omit<T, K>: never;
+
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;
