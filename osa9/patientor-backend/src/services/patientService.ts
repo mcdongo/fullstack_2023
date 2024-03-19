@@ -4,10 +4,7 @@ import patientData from '../data/patients';
 import { Patient, NonSensitivePatient, NewPatient } from '../types';
 
 const getPatients = (): Patient[] => {
-  const updatedPatients = patientData.map((patient) => ({
-    ...patient,
-    entries: []
-  }));
+  const updatedPatients = patientData;
   return updatedPatients;
 };
 
