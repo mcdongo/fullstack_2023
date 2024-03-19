@@ -25,10 +25,27 @@ const PatientInfo = () => {
   }
   return (
     <div>
-      <h1>{patient.name}</h1>
-      <p>gender: {patient.gender}</p>
-      <p>ssn: {patient.ssn}</p>
-      <p>occupation: {patient.occupation}</p>
+      <div>
+        <h1>{patient.name}</h1>
+        <p>gender: {patient.gender}</p>
+        <p>ssn: {patient.ssn}</p>
+        <p>occupation: {patient.occupation}</p>        
+      </div>
+      <div>
+        <h3>entries</h3>
+        {patient.entries.map((entry) => (
+          <div>
+            <p>{entry.date}: {entry.description}</p>
+            <ul>
+              {entry.diagnosisCodes?.map((entry) => (
+                <li>{entry}</li>
+              ))}
+
+            </ul>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 };
