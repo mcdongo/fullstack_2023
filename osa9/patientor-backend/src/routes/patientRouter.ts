@@ -24,5 +24,19 @@ router.post('/', (req, res) => {
   }
 });
 
+router.get('/:id', (req, res) => {
+  const id = req.params.id;
+  try {
+    const foundPatient = patientService.findById(id);
+    res.json(foundPatient);
+  } catch (error: unknown) {
+    let errorMessage = 'Something went wrong.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    res.status(404).send(errorMessage);
+  }
+});
+
 export default router;
 
