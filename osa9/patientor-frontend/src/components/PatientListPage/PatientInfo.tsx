@@ -2,6 +2,7 @@ import patientService from '../../services/patients';
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { Diagnosis, Patient } from "../../types";
+import BaseEntry from './Entry';
 
 interface Props {
   diagnosis: Diagnosis[];
@@ -10,7 +11,6 @@ interface Props {
 const PatientInfo = ({ diagnosis }: Props) => {
   const [patient, setPatient] = useState<Patient>();
   const id = useParams().id;
-  console.log(diagnosis);
 
   useEffect(() => {
     const getPatientData = async () => {
@@ -26,7 +26,7 @@ const PatientInfo = ({ diagnosis }: Props) => {
     const foundDiagnosis = diagnosis.find((d) => d.code === code);
     if (!foundDiagnosis) return 'not found';
     return foundDiagnosis.name;
-  }
+  };
 
 
   if (!id || !patient) {
@@ -43,14 +43,8 @@ const PatientInfo = ({ diagnosis }: Props) => {
       <div>
         <h3>entries</h3>
         {patient.entries.map((entry) => (
-          <div key={entry.id}>
-            <p>{entry.date}: {entry.description}</p>
-            <ul>
-              {entry.diagnosisCodes?.map((entry) => (
-                <li key={entry}>{entry} {findDiagnosisName(entry)}</li>
-              ))}
-
-            </ul>
+          <div key={entry.id} style={{border: '2px solid black', padding: '5px', margin: '5px'}}>
+            <BaseEntry entry={entry} diagnosisCodes={entry.diagnosisCodes} findDiagnosisName={findDiagnosisName}/>
           </div>
         ))}
       </div>
